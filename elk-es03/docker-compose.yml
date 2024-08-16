@@ -1,0 +1,30 @@
+services:
+  elk-es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    container_name: elk-es03
+    restart: unless-stopped
+    environment:
+      - xpack.security.enabled=false
+      - node.name=elk-es03
+      - cluster.name=elk-cluster
+      - cluster.initial_master_nodes=elk-es01,elk-es02,elk-es03
+      - discovery.seed_hosts=elk-es01,elk-es02
+      - 'ES_JAVA_OPTS=-Xms4g -Xmx4g'
+    volumes:
+      - elk-es03-vol:/usr/share/elasticsearch/data
+    networks:
+      - elk-network
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://elk-es03:9200']
+      interval: 1s
+      timeout: 1s
+      retries: 60
+    mem_reservation: 4g
+
+networks:
+  elk-network:
+    name: elk-network
+    external: true
+
+volumes:
+  elk-es03-vol:
