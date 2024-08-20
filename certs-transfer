@@ -3,9 +3,11 @@ mkdir elk-certs
 
 docker run --rm --volumes-from elk-setup -v ./elk-certs:/backup ubuntu:20.04 bash -c "tar cvf /backup/elk-certs.tar /usr/share/elasticsearch/config/certs"
 
-scp -r ./elk-certs
+scp -r ~/elk-stack/elk-certs ./
 
-chown root:root ./elk-certs/elk-certs.tar
+scp -r ./elk-certs ~/elk-stack
+
+sudo chown root:root ./elk-certs/elk-certs.tar
 
 docker create --name elk-restore -v elk-certs:/usr/share/elasticsearch/config/certs docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
 
