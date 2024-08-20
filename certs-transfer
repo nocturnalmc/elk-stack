@@ -1,0 +1,14 @@
+# moving generated elk-certs
+mkdir elk-certs
+
+docker run --rm --volumes-from elk-setup -v ./elk-certs:/backup ubuntu:20.04 bash -c "tar cvf /backup/elk-certs.tar /usr/share/elasticsearch/config/certs"
+
+scp -r ./elk-certs
+
+chown root:root ./elk-certs/elk-certs.tar
+
+docker create --name elk-restore -v elk-certs:/usr/share/elasticsearch/config/certs docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
+
+docker run --rm --volumes-from elk-restore -v ./elk-certs:/backup ubuntu:20.04 bash -c "cd /usr/share/elasticsearch/config/certs && tar xvf /backup/elk-certs.tar --strip 5"
+
+docker rm elk-restore
