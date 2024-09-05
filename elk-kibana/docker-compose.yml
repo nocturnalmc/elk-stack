@@ -5,7 +5,6 @@ services:
     restart: unless-stopped
     volumes:
       - elk-certs:/usr/share/kibana/config/certs
-      - kibanadata:/usr/share/kibana/data
     networks:
       - elk-network
     ports:
@@ -32,8 +31,6 @@ volumes:
   elk-certs:
     external: true
     name: elk-certs
-  kibanadata:
-    driver: local
 
 networks:
   elk-network:
